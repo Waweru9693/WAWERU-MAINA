@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waweru David Maina | ICT Professional & Software Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════ */
+:root {
+  --ink:     #0A0E14;
+  --ink2:    #111720;
+  --ink3:    #192030;
+  --teal:    #00C9A7;
+  --teal2:   #00E5BF;
+  --teal-d:  #00856E;
+  --text:    #DCE8F0;
+  --muted:   #6A8090;
+  --border:  rgba(0,201,167,0.15);
+  --glow:    rgba(0,201,167,0.12);
+}
+
+/* ══════ RESET ══════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* ══════ CURSOR ══════ */
+body { cursor: none; }
+#c { width:10px; height:10px; background:var(--teal); border-radius:50%; position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:transform .12s; }
+#cr { width:32px; height:32px; border:1px solid var(--teal); border-radius:50%; position:fixed; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); opacity:.45; transition:width .25s,height .25s; }
+a:hover ~ #c, button:hover ~ #c { transform:translate(-50%,-50%) scale(2); }
+
+/* ══════ NOISE ══════ */
+body::after {
+  content:''; position:fixed; inset:0; z-index:999; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  opacity:.5;
+}
+
+/* ══════ SCROLLBAR ══════ */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--ink); }
+::-webkit-scrollbar-thumb { background:var(--teal-d); }
+
+/* ══════ UTILITY ══════ */
+.mono { font-family:'JetBrains Mono',monospace; }
+.tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--teal); margin-bottom:16px;
+}
+.tag::before { content:''; width:18px; height:1px; background:var(--teal); }
+.reveal { opacity:0; transform:translateY(28px); transition:opacity .7s,transform .7s; }
+.reveal.on { opacity:1; transform:none; }
+
+/* ══════ NAV ══════ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  padding:20px 64px;
+  display:flex; justify-content:space-between; align-items:center;
+  transition:background .4s,border-color .4s,padding .4s;
+  border-bottom:1px solid transparent;
+}
+nav.stuck { background:rgba(10,14,20,.94); border-color:var(--border); padding:13px 64px; backdrop-filter:blur(16px); }
+.nav-brand { font-family:'Fraunces',serif; font-size:1.05rem; color:var(--teal); letter-spacing:.04em; }
+.nav-links { display:flex; gap:32px; list-style:none; }
+.nav-links a { color:var(--muted); font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; transition:color .3s; }
+.nav-links a:hover { color:var(--teal); }
+.nav-cta {
+  padding:9px 22px; border:1px solid var(--teal); color:var(--teal);
+  font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+  text-decoration:none; transition:background .3s,color .3s;
+}
+.nav-cta:hover { background:var(--teal); color:var(--ink); }
+
+/* ══════ HERO ══════ */
+#hero {
+  min-height:100vh; padding:140px 64px 80px;
+  display:grid; grid-template-columns:1fr 380px; gap:60px; align-items:center;
+  position:relative; overflow:hidden;
+}
+.hero-glow {
+  position:absolute; width:700px; height:700px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,201,167,.1) 0%, transparent 70%);
+  top:-200px; right:-100px; pointer-events:none;
+}
+.hero-grid-lines {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,201,167,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,201,167,.04) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+.hero-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.hero-eyebrow span {
+  font-family:'JetBrains Mono',monospace; font-size:.7rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--teal);
+}
+.hero-dot { width:6px; height:6px; border-radius:50%; background:var(--teal); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,201,167,.4)} 50%{opacity:.7;box-shadow:0 0 0 8px rgba(0,201,167,0)} }
+h1.hero-name {
+  font-family:'Fraunces',serif;
+  font-size:clamp(3.2rem,7vw,6.2rem);
+  font-weight:900; line-height:.95; letter-spacing:-.02em;
+  margin-bottom:6px;
+}
+h1.hero-name em { font-style:italic; color:var(--teal); display:block; }
+.hero-title {
+  font-family:'Fraunces',serif; font-size:1.05rem; font-weight:300;
+  color:var(--muted); letter-spacing:.05em; margin-bottom:28px;
+}
+.hero-title strong { color:var(--text); font-weight:500; }
+.hero-bio { color:var(--muted); line-height:1.85; font-size:.9rem; max-width:560px; margin-bottom:44px; }
+.hero-bio strong { color:var(--text); font-weight:500; }
+.hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-fill { padding:13px 30px; background:var(--teal); color:var(--ink); font-size:.76rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; text-decoration:none; transition:background .3s,transform .2s; display:inline-block; }
+.btn-fill:hover { background:var(--teal2); transform:translateY(-2px); }
+.btn-ghost { padding:13px 30px; border:1px solid var(--border); color:var(--text); font-size:.76rem; letter-spacing:.12em; text-transform:uppercase; text-decoration:none; transition:border-color .3s,color .3s,transform .2s; display:inline-block; }
+.btn-ghost:hover { border-color:var(--teal); color:var(--teal); transform:translateY(-2px); }
+/* hero card */
+.hero-card {
+  background:var(--ink2); border:1px solid var(--border);
+  padding:36px 32px; position:relative;
+}
+.hero-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,var(--teal),transparent); }
+.hc-row { display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border); font-size:.82rem; }
+.hc-row:last-child { border-bottom:none; }
+.hc-k { color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:.68rem; letter-spacing:.12em; }
+.hc-v { color:var(--text); text-align:right; font-size:.82rem; }
+.status-badge { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; background:rgba(0,201,167,.12); border:1px solid rgba(0,201,167,.3); color:var(--teal); font-size:.65rem; font-family:'JetBrains Mono',monospace; letter-spacing:.12em; text-transform:uppercase; }
+.status-badge::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--teal); animation:pulse 2s infinite; }
+
+/* ══════ STATS ══════ */
+.stats-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.stat { padding:28px 36px; border-right:1px solid var(--border); }
+.stat:last-child { border-right:none; }
+.stat-n { font-family:'Fraunces',serif; font-size:2.6rem; font-weight:700; color:var(--teal); line-height:1; margin-bottom:4px; }
+.stat-l { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+
+/* ══════ SECTIONS ══════ */
+section { padding:96px 64px; }
+.sh { font-family:'Fraunces',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; margin-bottom:56px; }
+.sh em { font-style:italic; color:var(--teal); }
+
+/* ══════ ABOUT ══════ */
+#about { background:var(--ink2); }
+.about-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:72px; }
+.about-p { color:var(--muted); line-height:1.9; font-size:.9rem; margin-bottom:16px; }
+.about-p strong { color:var(--text); font-weight:500; }
+.edu-block { margin-top:32px; }
+.edu-item { padding:16px 0; border-bottom:1px solid var(--border); display:flex; gap:16px; align-items:flex-start; }
+.edu-item:first-child { border-top:1px solid var(--border); }
+.edu-icon { font-size:1rem; padding-top:2px; flex-shrink:0; }
+.edu-deg { font-size:.88rem; font-weight:500; color:var(--text); margin-bottom:3px; }
+.edu-inst { font-size:.75rem; color:var(--muted); font-family:'JetBrains Mono',monospace; letter-spacing:.08em; }
+
+/* ══════ ACHIEVEMENTS ══════ */
+#achievements { background:var(--ink); }
+.ach-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); }
+.ach-card {
+  background:var(--ink); padding:36px 30px; position:relative; overflow:hidden;
+  transition:background .3s;
+}
+.ach-card:hover { background:var(--ink2); }
+.ach-card::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(to right,var(--teal),transparent);
+  transform:scaleX(0); transform-origin:left; transition:transform .4s;
+}
+.ach-card:hover::after { transform:scaleX(1); }
+.ach-n { font-family:'Fraunces',serif; font-size:3.5rem; font-weight:900; color:rgba(0,201,167,.06); position:absolute; top:12px; right:18px; line-height:1; }
+.ach-ico { font-size:1.4rem; margin-bottom:16px; }
+.ach-title { font-family:'Fraunces',serif; font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:10px; line-height:1.3; }
+.ach-body { font-size:.82rem; color:var(--muted); line-height:1.8; }
+.ach-src { display:inline-block; margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--teal-d); }
+
+/* ══════ SKILLS ══════ */
+#skills { background:var(--ink2); }
+.skills-wrap { display:grid; grid-template-columns:1fr 1fr; gap:72px; }
+.skill-group { margin-bottom:36px; }
+.skill-group-title { font-family:'JetBrains Mono',monospace; font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--teal); margin-bottom:18px; }
+.skill-row { margin-bottom:14px; }
+.skill-meta { display:flex; justify-content:space-between; font-size:.8rem; color:var(--text); margin-bottom:7px; }
+.skill-pct { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--teal); }
+.bar-bg { height:2px; background:rgba(255,255,255,.06); }
+.bar-fill { height:100%; background:linear-gradient(90deg,var(--teal),var(--teal2)); width:0; transition:width 1.3s cubic-bezier(.4,0,.2,1); }
+.tags { display:flex; flex-wrap:wrap; gap:7px; }
+.tag-pill {
+  padding:5px 13px; border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:.63rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  transition:border-color .3s,color .3s;
+}
+.tag-pill:hover { border-color:var(--teal); color:var(--teal); }
+
+/* ══════ EXPERIENCE ══════ */
+#experience { background:var(--ink); }
+.exp-list { display:flex; flex-direction:column; gap:2px; }
+.exp-card {
+  background:var(--ink2); border:1px solid var(--border);
+  padding:36px 40px; position:relative; overflow:hidden;
+  transition:border-color .3s;
+}
+.exp-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--teal); transform:scaleY(0); transform-origin:top; transition:transform .4s; }
+.exp-card:hover { border-color:rgba(0,201,167,.35); }
+.exp-card:hover::before { transform:scaleY(1); }
+.exp-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:6px; }
+.exp-role { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:700; }
+.exp-date { font-family:'JetBrains Mono',monospace; font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--teal); padding:4px 12px; border:1px solid var(--border); white-space:nowrap; }
+.exp-org { font-size:.82rem; color:var(--muted); margin-bottom:20px; font-style:italic; }
+.exp-duties { list-style:none; }
+.exp-duties li { font-size:.83rem; color:var(--muted); line-height:1.75; padding-left:18px; position:relative; margin-bottom:5px; }
+.exp-duties li::before { content:'▸'; position:absolute; left:0; color:var(--teal); font-size:.6rem; top:4px; }
+.exp-wins { margin-top:20px; }
+.exp-wins-title { font-family:'JetBrains Mono',monospace; font-size:.63rem; letter-spacing:.18em; text-transform:uppercase; color:var(--teal); margin-bottom:10px; }
+.exp-win { display:flex; gap:10px; margin-bottom:8px; font-size:.82rem; color:var(--text); }
+.exp-win::before { content:'★'; color:var(--teal); font-size:.7rem; flex-shrink:0; padding-top:2px; }
+
+/* ══════ ACCOLADES ══════ */
+#accolades { background:var(--ink2); }
+.acc-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.acc-item {
+  background:var(--ink); border:1px solid var(--border);
+  padding:24px 28px; display:flex; gap:16px; align-items:flex-start;
+  transition:border-color .3s,transform .25s;
+}
+.acc-item:hover { border-color:rgba(0,201,167,.4); transform:translateY(-3px); }
+.acc-bullet { width:8px; height:8px; background:var(--teal); border-radius:50%; flex-shrink:0; margin-top:6px; }
+.acc-text { font-size:.85rem; color:var(--muted); line-height:1.7; }
+.acc-text strong { color:var(--text); font-weight:500; }
+
+/* ══════ LEADERSHIP ══════ */
+#leadership { background:var(--ink); }
+.lead-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.lead-card {
+  background:var(--ink2); border:1px solid var(--border);
+  padding:28px 26px; text-align:center;
+  transition:border-color .3s, background .3s;
+}
+.lead-card:hover { border-color:var(--teal); background:rgba(0,201,167,.04); }
+.lead-ico { font-size:1.6rem; margin-bottom:12px; }
+.lead-title { font-family:'Fraunces',serif; font-size:.95rem; font-weight:700; color:var(--text); margin-bottom:6px; }
+.lead-org { font-size:.75rem; color:var(--muted); font-family:'JetBrains Mono',monospace; letter-spacing:.08em; }
+
+/* ══════ CONTACT ══════ */
+#contact { background:var(--ink2); text-align:center; }
+.contact-wrap { max-width:560px; margin:0 auto; }
+.contact-intro { color:var(--muted); font-size:.9rem; line-height:1.9; margin-bottom:48px; }
+.contact-email {
+  font-family:'Fraunces',serif; font-size:clamp(1.2rem,2.5vw,1.8rem);
+  font-weight:700; color:var(--teal); text-decoration:none;
+  border-bottom:1px solid rgba(0,201,167,.3); padding-bottom:4px;
+  transition:border-color .3s; display:inline-block; margin-bottom:12px;
+}
+.contact-email:hover { border-color:var(--teal); }
+.contact-phones { display:flex; justify-content:center; gap:24px; margin-bottom:36px; font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--muted); }
+.contact-phones a { color:var(--muted); text-decoration:none; transition:color .3s; }
+.contact-phones a:hover { color:var(--teal); }
+.refs-title { font-family:'JetBrains Mono',monospace; font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin:40px 0 18px; }
+.refs-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; text-align:left; }
+.ref-card { background:var(--ink); border:1px solid var(--border); padding:18px 20px; }
+.ref-name { font-size:.85rem; font-weight:500; color:var(--text); margin-bottom:3px; }
+.ref-role { font-size:.72rem; color:var(--muted); line-height:1.5; margin-bottom:4px; }
+.ref-tel { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--teal); }
+
+/* ══════ FOOTER ══════ */
+footer { padding:24px 64px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-family:'JetBrains Mono',monospace; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+
+/* ══════ HERO ANIMATIONS ══════ */
+.fade-a { opacity:0; animation:fu .8s forwards; }
+.fade-a:nth-child(1){animation-delay:.2s}
+.fade-a:nth-child(2){animation-delay:.4s}
+.fade-a:nth-child(3){animation-delay:.6s}
+.fade-a:nth-child(4){animation-delay:.8s}
+.fade-a:nth-child(5){animation-delay:1s}
+@keyframes fu { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+
+/* ══════ RESPONSIVE ══════ */
+@media(max-width:960px){
+  nav{padding:18px 24px;} nav.stuck{padding:12px 24px;}
+  .nav-links,.nav-cta{display:none;}
+  #hero{padding:100px 24px 60px; grid-template-columns:1fr;}
+  .hero-card{display:none;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .stat{padding:20px 20px;}
+  section{padding:64px 24px;}
+  .about-grid,.skills-wrap{grid-template-columns:1fr; gap:40px;}
+  .ach-grid{grid-template-columns:1fr;}
+  .acc-grid,.refs-grid{grid-template-columns:1fr;}
+  .lead-grid{grid-template-columns:1fr 1fr;}
+  footer{flex-direction:column; text-align:center; padding:24px;}
+}
+@media(max-width:600px){
+  .lead-grid{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="c"></div>
+<div id="cr"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-brand">WDM</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#accolades">Accolades</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:davidwaweru9693@gmail.com" class="nav-cta">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid-lines"></div>
+  <div>
+    <div class="hero-eyebrow fade-a">
+      <div class="hero-dot"></div>
+      <span>Available for opportunities</span>
+    </div>
+    <h1 class="hero-name fade-a">
+      Waweru
+      <em>David Maina</em>
+    </h1>
+    <p class="hero-title fade-a"><strong>Head of ICT</strong> &nbsp;·&nbsp; Software Developer &nbsp;·&nbsp; ICT Trainer</p>
+    <p class="hero-bio fade-a">
+      BSc Software Development graduate and seasoned ICT professional with a track record across <strong>enterprise ERP systems, network infrastructure, software development, and capacity building</strong>. Currently leading all technology operations at Nokras Riverine Hotel since January 2023.
+    </p>
+    <div class="hero-btns fade-a">
+      <a href="#achievements" class="btn-fill">View Achievements</a>
+      <a href="#contact" class="btn-ghost">Get In Touch</a>
+    </div>
+  </div>
+  <div class="hero-card fade-a">
+    <div class="hc-row">
+      <span class="hc-k">Status</span>
+      <span class="hc-v"><span class="status-badge">Active</span></span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Current Role</span>
+      <span class="hc-v">Head of ICT</span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Employer</span>
+      <span class="hc-v">Nokras Riverine</span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Since</span>
+      <span class="hc-v">January 2023</span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Education</span>
+      <span class="hc-v">BSc Software Dev</span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Location</span>
+      <span class="hc-v">Nairobi, Kenya</span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Certification</span>
+      <span class="hc-v">CISA (Ongoing)</span>
+    </div>
+    <div class="hc-row">
+      <span class="hc-k">Email</span>
+      <span class="hc-v" style="font-size:.72rem">davidwaweru9693@gmail.com</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat reveal">
+    <div class="stat-n" data-count="3">0</div>
+    <div class="stat-l">Years Experience</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-n" data-count="3">0</div>
+    <div class="stat-l">Organisations Served</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-n" data-count="2">0</div>
+    <div class="stat-l">Hackathons</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-n" data-count="6">0</div>
+    <div class="stat-l">Major Accolades</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="tag">Profile</div>
+  <h2 class="sh">About <em>Waweru</em></h2>
+  <div class="about-grid">
+    <div>
+      <p class="about-p">Waweru David Maina is a <strong>results-oriented Information Technology professional</strong> holding a BSc in Software Development from KCA University. He combines strong technical depth in software engineering with practical leadership in ICT systems management.</p>
+      <p class="about-p">His career spans enterprise environments — from <strong>SACCO financial systems</strong> at Amica SACCO, to hospitality ICT at <strong>Nokras Riverine Hotel</strong> — where he leads all technology strategy, infrastructure, and operations as Head of ICT.</p>
+      <p class="about-p">Beyond his day role, Waweru actively <strong>trains ICT at Michuki National Polytechnic and Kandara TVTC</strong>, and co-founded BoluBolu Software Technologies, demonstrating a commitment to community tech empowerment. He also set up a 16-computer lab in his home village to boost ICT literacy for high school graduates.</p>
+      <p class="about-p">His core drive: <strong>deploy technology that genuinely transforms lives and organisations</strong> — not technology for its own sake.</p>
+      <div class="edu-block">
+        <div class="tag" style="margin-bottom:12px;">Education</div>
+        <div class="edu-item">
+          <span class="edu-icon">🎓</span>
+          <div><div class="edu-deg">BSc Software Development (2nd Class Honours)</div><div class="edu-inst">KCA University</div></div>
+        </div>
+        <div class="edu-item">
+          <span class="edu-icon">🔐</span>
+          <div><div class="edu-deg">Certified Information Systems Auditor (CISA) — Ongoing</div><div class="edu-inst">KCA University</div></div>
+        </div>
+        <div class="edu-item">
+          <span class="edu-icon">📊</span>
+          <div><div class="edu-deg">Data Analytics</div><div class="edu-inst">ALX Africa</div></div>
+        </div>
+        <div class="edu-item">
+          <span class="edu-icon">📱</span>
+          <div><div class="edu-deg">Digital Marketing</div><div class="edu-inst">Ajira Digital</div></div>
+        </div>
+        <div class="edu-item">
+          <span class="edu-icon">💻</span>
+          <div><div class="edu-deg">Microsoft Office Suite & Computer Applications</div><div class="edu-inst">Icotec Computer College</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="tag" style="margin-bottom:12px;">Personal Info</div>
+      <div style="border:1px solid var(--border);">
+        <div class="hc-row" style="padding:16px 20px;"><span class="hc-k">Full Name</span><span class="hc-v">Waweru David Maina</span></div>
+        <div class="hc-row" style="padding:16px 20px; border-top:1px solid var(--border);"><span class="hc-k">Email</span><span class="hc-v" style="font-size:.75rem">davidwaweru9693@gmail.com</span></div>
+        <div class="hc-row" style="padding:16px 20px; border-top:1px solid var(--border);"><span class="hc-k">Phone</span><span class="hc-v">0743 753 328</span></div>
+        <div class="hc-row" style="padding:16px 20px; border-top:1px solid var(--border);"><span class="hc-k">Alt Phone</span><span class="hc-v">0751 278 571</span></div>
+        <div class="hc-row" style="padding:16px 20px; border-top:1px solid var(--border);"><span class="hc-k">Address</span><span class="hc-v">P.O. Box 289-00232</span></div>
+        <div class="hc-row" style="padding:16px 20px; border-top:1px solid var(--border);"><span class="hc-k">Nationality</span><span class="hc-v">Kenyan 🇰🇪</span></div>
+        <div class="hc-row" style="padding:16px 20px; border-top:1px solid var(--border); border-bottom:none;"><span class="hc-k">Specialty</span><span class="hc-v">ICT Leadership & SW Dev</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="tag">Wins</div>
+  <h2 class="sh">Key <em>Achievements</em></h2>
+  <div class="ach-grid">
+
+    <div class="ach-card reveal">
+      <span class="ach-n">01</span>
+      <div class="ach-ico">🖥️</div>
+      <h3 class="ach-title">High POS Availability in Peak Operations</h3>
+      <p class="ach-body">Maintained consistently high POS system availability during peak service hours at Nokras Riverine, ensuring zero sales interruptions and smooth transaction processing throughout busy periods.</p>
+      <span class="ach-src">Nokras Riverine · 2023–Present</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">02</span>
+      <div class="ach-ico">🎓</div>
+      <h3 class="ach-title">Staff IT Training & Ticket Reduction</h3>
+      <p class="ach-body">Designed and delivered structured IT training for hotel staff that significantly reduced routine IT support requests, empowering staff with digital confidence and freeing the ICT team for strategic work.</p>
+      <span class="ach-src">Nokras Riverine · 2023</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">03</span>
+      <div class="ach-ico">💾</div>
+      <h3 class="ach-title">Daily Backup System Implementation</h3>
+      <p class="ach-body">Replaced a risky weekly backup schedule with a robust daily backup strategy, dramatically reducing potential data loss exposure. A critical improvement to the hotel's business continuity posture.</p>
+      <span class="ach-src">Nokras Riverine · 2023</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">04</span>
+      <div class="ach-ico">⏱️</div>
+      <h3 class="ach-title">Employee Tracking System Rollout</h3>
+      <p class="ach-body">Supported the deployment of an employee time-tracking system that directly improved payroll accuracy, reduced disputes, and brought accountability to HR processes across hotel departments.</p>
+      <span class="ach-src">Nokras Riverine · 2023</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">05</span>
+      <div class="ach-ico">🏆</div>
+      <h3 class="ach-title">Outstanding IT Staff Award — AGM 2021 & 2022</h3>
+      <p class="ach-body">Earned the Outstanding IT Department Staff award at Amica SACCO's AGM for two consecutive years (2021 and 2022), recognising exceptional technical competence, reliability, and professional conduct.</p>
+      <span class="ach-src">Amica SACCO · 2021–2022</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">06</span>
+      <div class="ach-ico">🔒</div>
+      <h3 class="ach-title">2nd Runners-Up — Huawei Cybersecurity Hackathon</h3>
+      <p class="ach-body">Placed 2nd runners-up in the Huawei Cybersecurity Hackathon 2021 under the theme <em>"Security for the Internet Space"</em>, competing against top technology talent from across the country.</p>
+      <span class="ach-src">Huawei · 2021</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">07</span>
+      <div class="ach-ico">🌍</div>
+      <h3 class="ach-title">Murang'a County E-Government Systems Developer</h3>
+      <p class="ach-body">Participated in contractual systems development for Murang'a County Government, building Healthcare Monitoring Information Systems and Revenue Collection Systems serving thousands of residents.</p>
+      <span class="ach-src">Muranga County Government</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">08</span>
+      <div class="ach-ico">📦</div>
+      <h3 class="ach-title">Zeraki Analytics & School Website Contracts</h3>
+      <p class="ach-body">Served as a contractual developer for Zeraki Analytics Software and participated in its rollout across schools in Murang'a County. Also developed websites for Gatura Girls, Ngararia Girls, and Murang'a High School.</p>
+      <span class="ach-src">Zeraki · Schools</span>
+    </div>
+
+    <div class="ach-card reveal">
+      <span class="ach-n">09</span>
+      <div class="ach-ico">🏫</div>
+      <h3 class="ach-title">Community ICT Lab — 16 Computers Installed</h3>
+      <p class="ach-body">Personally set up a 16-computer lab in his home village to support ICT literacy and online job readiness for high school graduates, directly impacting youth employment prospects in a rural community.</p>
+      <span class="ach-src">Community Initiative · Ongoing</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="tag">Expertise</div>
+  <h2 class="sh">Technical <em>Skills</em></h2>
+  <div class="skills-wrap">
+    <div>
+      <div class="skill-group">
+        <div class="skill-group-title">Core Technical</div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Software Development</span><span class="skill-pct">88%</span></div>
+          <div class="bar-bg"><div class="bar-fill" data-w="88"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>POS / ERP Administration (MS Dynamics 365)</span><span class="skill-pct">90%</span></div>
+          <div class="bar-bg"><div class="bar-fill" data-w="90"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Database Management (MySQL, Oracle, MongoDB)</span><span class="skill-pct">85%</span></div>
+          <div class="bar-bg"><div class="bar-fill" data-w="85"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Network Configuration & Cybersecurity</span><span class="skill-pct">82%</span></div>
+          <div class="bar-bg"><div class="bar-fill" data-w="82"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Data Analysis (Power BI, Tableau)</span><span class="skill-pct">78%</span></div>
+          <div class="bar-bg"><div class="bar-fill" data-w="78"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Hardware & Systems Troubleshooting</span><span class="skill-pct">92%</span></div>
+          <div class="bar-bg"><div class="bar-fill" data-w="92"></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="skill-group">
+        <div class="skill-group-title">Technologies & Tools</div>
+        <div class="tags">
+          <span class="tag-pill">MS Dynamics 365</span>
+          <span class="tag-pill">MySQL</span>
+          <span class="tag-pill">Oracle DB</span>
+          <span class="tag-pill">MongoDB</span>
+          <span class="tag-pill">Power BI</span>
+          <span class="tag-pill">Tableau</span>
+          <span class="tag-pill">Python</span>
+          <span class="tag-pill">PHP</span>
+          <span class="tag-pill">JavaScript</span>
+          <span class="tag-pill">HTML/CSS</span>
+          <span class="tag-pill">Machine Learning</span>
+          <span class="tag-pill">AI Automation</span>
+          <span class="tag-pill">CCTV Systems</span>
+          <span class="tag-pill">Network Cabling</span>
+          <span class="tag-pill">Windows Server</span>
+          <span class="tag-pill">Linux</span>
+          <span class="tag-pill">MS Office 365</span>
+          <span class="tag-pill">User Access Control</span>
+          <span class="tag-pill">Backup Strategy</span>
+          <span class="tag-pill">ICT Training</span>
+          <span class="tag-pill">ITIL</span>
+          <span class="tag-pill">Digital Marketing</span>
+        </div>
+      </div>
+      <div class="skill-group" style="margin-top:28px;">
+        <div class="skill-group-title">Soft Skills</div>
+        <div class="tags">
+          <span class="tag-pill">Leadership</span>
+          <span class="tag-pill">Training & Mentoring</span>
+          <span class="tag-pill">Cross-cultural Communication</span>
+          <span class="tag-pill">Integrity</span>
+          <span class="tag-pill">Project Coordination</span>
+          <span class="tag-pill">Vendor Management</span>
+          <span class="tag-pill">Documentation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="tag">Career</div>
+  <h2 class="sh">Work <em>Experience</em></h2>
+  <div class="exp-list">
+
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">Head of ICT</div>
+          <div class="exp-org">Nokras Riverine Hotel &nbsp;·&nbsp; Nairobi, Kenya</div>
+        </div>
+        <span class="exp-date">Jan 2023 — Present</span>
+      </div>
+      <ul class="exp-duties">
+        <li>Set up and maintain MS Dynamics 365 ERP and POS systems across all hotel operations.</li>
+        <li>Ensure proper functioning of the local network and monitor performance logs for anomalies.</li>
+        <li>Monitor CCTV security cameras and cybersecurity risks; enforce access control and password policies.</li>
+        <li>Provide IT support and structured training to IT interns, staff, and supervisors.</li>
+        <li>Coordinate with external vendors for hardware/software procurement and repairs.</li>
+        <li>Maintain full inventory of ICT equipment; keep detailed records of issues, fixes, and configurations.</li>
+        <li>Plan and implement system upgrades, backups, and new technology installations.</li>
+        <li>Support billing software, inventory management system, and employee time-tracking applications.</li>
+      </ul>
+      <div class="exp-wins">
+        <div class="exp-wins-title">★ Highlights</div>
+        <div class="exp-win">Maintained high POS availability during peak hours, ensuring uninterrupted sales operations.</div>
+        <div class="exp-win">Trained staff on IT skills, reducing routine support requests significantly.</div>
+        <div class="exp-win">Introduced daily backups replacing a risky weekly schedule — reduced data loss risk.</div>
+        <div class="exp-win">Supported employee tracking system rollout that improved payroll accuracy.</div>
+        <div class="exp-win">Earned strong MD recommendation for ICT Trainer role at Michuki Polytechnic.</div>
+      </div>
+    </div>
+
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">IT Officer</div>
+          <div class="exp-org">Amica Savings and Credit Society (Amica SACCO) &nbsp;·&nbsp; Muranga</div>
+        </div>
+        <span class="exp-date">Apr 2020 — Jul 2022</span>
+      </div>
+      <ul class="exp-duties">
+        <li>Safeguarded ICT infrastructure through pre-emptive planning for efficient business operations.</li>
+        <li>Assisted in preparation, review and monitoring of ICT Annual Budget and Operating Plan.</li>
+        <li>Participated in development and review of ICT policies and disaster recovery plans.</li>
+        <li>Managed all bank agency services ensuring adequate uptime in back office systems.</li>
+        <li>Supervised planning and scheduling of ICT projects in collaboration with the ICT Manager.</li>
+        <li>Conducted training for system users on operating systems, databases, and business applications.</li>
+        <li>Guaranteed data security including availability, continuity, and anti-virus management.</li>
+        <li>Maintained up-to-date system log register and enforced staff compliance with ICT policy.</li>
+      </ul>
+      <div class="exp-wins">
+        <div class="exp-wins-title">★ Highlights</div>
+        <div class="exp-win">Completed ICT tasks independently and met tight deadlines on multiple critical assignments.</div>
+        <div class="exp-win">Received strong recommendation from the CEO for professionalism and technical competence.</div>
+        <div class="exp-win">Won the Outstanding IT Department Staff Award at AGM — two consecutive years (2021 & 2022).</div>
+      </div>
+    </div>
+
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">MCA Candidate — Gitugi Ward</div>
+          <div class="exp-org">Murang'a County &nbsp;·&nbsp; General Elections</div>
+        </div>
+        <span class="exp-date">2022</span>
+      </div>
+      <ul class="exp-duties">
+        <li>Mobilised voters through rallies, door-to-door visits, and inclusive community forums.</li>
+        <li>Presented a development agenda addressing water access, youth unemployment, and road infrastructure.</li>
+        <li>Engaged youth, women, and marginalised groups to build broad-based community support.</li>
+        <li>Secured endorsements from key community leaders; upheld integrity and electoral compliance.</li>
+      </ul>
+      <div class="exp-wins">
+        <div class="exp-wins-title">★ Highlights</div>
+        <div class="exp-win">Increased voter engagement by 40% through grassroots mobilisation and community forums.</div>
+        <div class="exp-win">Organised 10+ public participation forums gathering input from diverse community groups.</div>
+      </div>
+    </div>
+
+    <div class="exp-card reveal">
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">ICT Part-Time Trainer & Internal Examiner</div>
+          <div class="exp-org">Michuki National Polytechnic &amp; Kandara TVTC</div>
+        </div>
+        <span class="exp-date">May 2022 — Present</span>
+      </div>
+      <ul class="exp-duties">
+        <li>Train youth in computer skills including office applications, web development, and digital literacy.</li>
+        <li>Serve as internal examiner assessing student competency against national standards.</li>
+        <li>Develop course materials and practical exercises tailored to industry needs and TVET curriculum.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ACCOLADES -->
+<section id="accolades">
+  <div class="tag">Recognition</div>
+  <h2 class="sh">Accolades &amp; <em>Projects</em></h2>
+  <div class="acc-grid">
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>2nd Runners-Up — Huawei Cybersecurity Hackathon 2021</strong> under the theme "Security for the Internet Space". Competed against national-level technology talent.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>Contractual System Developer — Zeraki Analytics Software</strong>. Participated in development and rollout of Zeraki Analytics across schools in Murang'a County.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>Murang'a County E-Government Systems</strong> — contributed to development of Healthcare Monitoring Information Systems and Revenue Collection Systems for the county government.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>Jumia Systems Development</strong> — worked on development contracts for new Jumia systems, gaining experience in large-scale e-commerce platform engineering.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>Huawei 2024 Hackathon</strong> — participated at Safari Park Hotel, collaborating with tech innovators on cutting-edge ICT solutions.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>School Website Contracts</strong> — built and deployed websites for Gatura Girls, Ngararia Girls, and Murang'a High School, improving their digital presence and accessibility.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>Community ICT Lab Setup</strong> — installed a 16-computer lab in his home village to support ICT literacy and online job opportunities for high school graduates.</div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-bullet"></div>
+      <div class="acc-text"><strong>Co-founder — BoluBolu Software Technologies</strong>. Launched a software company delivering custom solutions and contributing to Kenya's growing tech ecosystem.</div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP -->
+<section id="leadership">
+  <div class="tag">Leadership</div>
+  <h2 class="sh">Roles &amp; <em>Memberships</em></h2>
+  <div class="lead-grid">
+    <div class="lead-card reveal">
+      <div class="lead-ico">🦅</div>
+      <div class="lead-title">Secretary — Equity Wings to Fly</div>
+      <div class="lead-org">Muranga County Charter</div>
+    </div>
+    <div class="lead-card reveal">
+      <div class="lead-ico">🖥️</div>
+      <div class="lead-title">Member — ICTAK & CSK</div>
+      <div class="lead-org">Computer Society of Kenya</div>
+    </div>
+    <div class="lead-card reveal">
+      <div class="lead-ico">🚀</div>
+      <div class="lead-title">Co-Founder</div>
+      <div class="lead-org">BoluBolu Software Technologies</div>
+    </div>
+    <div class="lead-card reveal">
+      <div class="lead-ico">🎙️</div>
+      <div class="lead-title">Secretary General</div>
+      <div class="lead-org">KCA University Student Union</div>
+    </div>
+    <div class="lead-card reveal">
+      <div class="lead-ico">👑</div>
+      <div class="lead-title">Deputy President</div>
+      <div class="lead-org">KCA University</div>
+    </div>
+    <div class="lead-card reveal">
+      <div class="lead-ico">🏫</div>
+      <div class="lead-title">School Captain</div>
+      <div class="lead-org">Njumbi Boys High School</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="tag" style="justify-content:center;">Contact</div>
+  <h2 class="sh" style="text-align:center;">Let's <em>Connect</em></h2>
+  <div class="contact-wrap">
+    <p class="contact-intro">
+      Open to ICT leadership roles, software development contracts, consulting engagements, and training partnerships. Based in Nairobi, Kenya — available nationwide.
+    </p>
+    <a href="mailto:davidwaweru9693@gmail.com" class="contact-email">davidwaweru9693@gmail.com</a>
+    <div class="contact-phones">
+      <a href="tel:+254743753328">+254 743 753 328</a>
+      <span style="color:var(--border)">|</span>
+      <a href="tel:+254751278571">+254 751 278 571</a>
+    </div>
+    <div class="refs-title">References</div>
+    <div class="refs-grid">
+      <div class="ref-card">
+        <div class="ref-name">Mr Chalton Kefa Masai</div>
+        <div class="ref-role">Head of ICT, Kenversity Sacco & Credit Society Ltd</div>
+        <div class="ref-tel">0723 428 144</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-name">Mrs Susan Wambui</div>
+        <div class="ref-role">Head of ICT, Kenversity Sacco & Credit Society Ltd</div>
+        <div class="ref-tel">0725 559 904</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-name">Mr Meshak Kipkorir</div>
+        <div class="ref-role">Chief Officer ICT Services, Murang'a County Government</div>
+        <div class="ref-tel">0790 019 666</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-name">Mr Trevoh Noah Rono</div>
+        <div class="ref-role">ICT Officer, Afya Sacco</div>
+        <div class="ref-tel">0723 650 483</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-name">Mr Gachuchah Manoah</div>
+        <div class="ref-role">CECM, Youth & Sports Affairs, Murang'a County Government</div>
+        <div class="ref-tel">0726 940 871</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-name">Mrs Carden Adembo, CPA</div>
+        <div class="ref-role">Student Finance Manager, KCA University</div>
+        <div class="ref-tel">0722 922 133</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 Waweru David Maina</span>
+  <span>Head of ICT — Nokras Riverine Hotel</span>
+  <span>Nairobi, Kenya · davidwaweru9693@gmail.com</span>
+</footer>
+
+<script>
+/* ── Cursor ── */
+const c = document.getElementById('c'), cr = document.getElementById('cr');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+(function loop(){ c.style.left=mx+'px'; c.style.top=my+'px'; rx+=(mx-rx)*.11; ry+=(my-ry)*.11; cr.style.left=rx+'px'; cr.style.top=ry+'px'; requestAnimationFrame(loop); })();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ cr.style.width='52px'; cr.style.height='52px'; cr.style.opacity='.9'; });
+  el.addEventListener('mouseleave',()=>{ cr.style.width='32px'; cr.style.height='32px'; cr.style.opacity='.45'; });
+});
+
+/* ── Navbar ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=> nav.classList.toggle('stuck', scrollY>50));
+
+/* ── Reveal on scroll ── */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('on');
+      e.target.querySelectorAll('.bar-fill').forEach(b=> b.style.width = b.dataset.w+'%');
+    }
+  });
+},{threshold:.13});
+document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(i%6)*.07+'s'; io.observe(el); });
+
+/* ── Skills section ── */
+const sio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.querySelectorAll('.bar-fill').forEach(b=>{ setTimeout(()=>b.style.width=b.dataset.w+'%',150); });
+  });
+},{threshold:.3});
+document.querySelectorAll('#skills').forEach(el=>sio.observe(el));
+
+/* ── Count-up ── */
+function countUp(el,target){
+  let v=0; const s=target/55;
+  const t=setInterval(()=>{ v+=s; if(v>=target){v=target;clearInterval(t);} el.textContent=Math.round(v)+'+'; },22);
+}
+const cio=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('[data-count]').forEach(el=>countUp(el,+el.dataset.count));
+      cio.unobserve(e.target);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('.stats-row').forEach(el=>cio.observe(el));
+</script>
+</body>
+</html>
